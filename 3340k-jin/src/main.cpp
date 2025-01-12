@@ -18,7 +18,7 @@
 #define CLAMP_PORT 'a'
 #define FLAG_PORT 'b'
 
-pros::Motor Intake(-INTAKE_PORT);
+pros::Motor Intake(INTAKE_PORT);
 pros::Motor HighStakes(HIGH_STAKES_PORT);
 
 pros::MotorGroup LeftDriveSmart({LEFT_MOTOR_A_PORT, LEFT_MOTOR_B_PORT, -LEFT_MOTOR_C_PORT}); //Creates a motor group with forwards ports 1 & 4 and reversed port 7
