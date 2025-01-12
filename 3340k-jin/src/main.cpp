@@ -130,9 +130,9 @@ void opcontrol() {
         int turn = Controller1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y); // Forward/backward
         int forward = Controller1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);  // Turning
 
-        // Compute motor speeds for tank drive
-        int drivetrainLeftSideSpeed = (forward - turn);  // Left motor speed
-        int drivetrainRightSideSpeed = -(forward + turn); // Right motor speed
+        // Compute motor speeds for arcade drive
+        int drivetrainLeftSideSpeed = -(forward + turn); // Left motor speed
+        int drivetrainRightSideSpeed = (forward - turn);  // Right motor speed
 
         // Deadband logic to prevent small joystick movements from moving the robot
         const int deadband = 25; // Threshold for joystick input
@@ -144,8 +144,8 @@ void opcontrol() {
         }
 
         // Set motor velocities
-        LeftDriveSmart.move_velocity((drivetrainRightSideSpeed * 2));  // Adjust scaling as needed
-        RightDriveSmart.move_velocity(-(drivetrainLeftSideSpeed * 2));
+        LeftDriveSmart.move_velocity(-(drivetrainRightSideSpeed * 2));  // Adjust scaling as needed
+        RightDriveSmart.move_velocity((drivetrainLeftSideSpeed * 2));
 
         // Control Clamp and Flag using buttons
         if (Controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
