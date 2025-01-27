@@ -8,7 +8,7 @@
 #define RIGHT_MOTOR_B_PORT 18
 #define RIGHT_MOTOR_C_PORT 8
 
-#define INERTIAL_PORT 21 //not correct
+#define INERTIAL_PORT 16
 
 #define INTAKE_PORT 9
 
@@ -23,8 +23,7 @@ pros::Motor HighStakes(HIGH_STAKES_PORT);
 
 pros::MotorGroup LeftDriveSmart({LEFT_MOTOR_A_PORT, LEFT_MOTOR_B_PORT, -LEFT_MOTOR_C_PORT}); //Creates a motor group with forwards ports 1 & 4 and reversed port 7
 pros::MotorGroup RightDriveSmart({RIGHT_MOTOR_A_PORT, RIGHT_MOTOR_B_PORT, -RIGHT_MOTOR_C_PORT}); //Creates a motor group with forwards port 2 and reversed port 6 and 5
-pros::Imu DrivetrainInertial(INERTIAL_PORT);
-//DrivetrainInertial.reset();
+pros::Imu Inertial(INERTIAL_PORT);
 pros::MotorGroup smartdrive ({LEFT_MOTOR_A_PORT, LEFT_MOTOR_B_PORT, -LEFT_MOTOR_C_PORT, RIGHT_MOTOR_A_PORT, RIGHT_MOTOR_B_PORT, -RIGHT_MOTOR_C_PORT, INERTIAL_PORT});
 pros::ADIDigitalOut Clamp ({CLAMP_PORT});
 pros::ADIDigitalOut Flag ({FLAG_PORT});
@@ -105,7 +104,62 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+enum Direction {clockwise, counterclockwise};
+void TurnDegrees(pros::IMU& inertial, Direction dir, int degrees) {
+
+    int initial = Inertial.get_heading();
+    int targetdeg;
+
+    if (dir == clockwise) {
+        targetdeg = (initial + degrees);
+        LeftDriveSmart.move_velocity(-20);
+        RightDriveSmart.move_velocity(-20);
+
+        while (inertial.get_heading() < targetdeg) {
+            pros::delay(5);
+        }
+    } else if (dir==counterclockwise) { 
+        targetdeg = 360-degrees;
+        
+        RightDriveSmart.move_velocity(20);
+        LeftDriveSmart.move_velocity(20);
+
+        while (inertial.get_heading() > targetdeg || inertial.get_heading() < 5) {
+            pros::delay(5);
+        }
+    }
+    LeftDriveSmart.move_velocity(0);
+    RightDriveSmart.move_velocity(0);
+}
+
+void autonomous() {
+    HighStakes.move_relative(-740, 50);
+    Inertial.reset();
+    pros::delay(2000);
+
+    //Rotate 10~15 degrees
+    TurnDegrees(Inertial, Direction::clockwise, 30);
+    /*
+    //Go forward to stake
+    LeftDriveSmart.move_velocity(-200);
+    RightDriveSmart.move_velocity(-200);
+    pros::delay(3000);
+    LeftDriveSmart.move_velocity(0);
+    RightDriveSmart.move_velocity(0);
+    //Clamp 
+    ToggleClamp();
+    //Rotate 40~50 degrees counterclockwise
+    TurnDegrees(Inertial, Direction::counterclockwise, 40);
+    //Go backward to rings
+    //Activate intake to get blue ring and score
+    //Rotate 30 degrees clockwise
+    //Go forward and stop at the ladder
+
+    //ToggleFlag();
+    //TurnDegrees(Inertial, Direction::clockwise, 30);
+}
+    */
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -145,7 +199,7 @@ void opcontrol() {
 
         // Set motor velocities
         LeftDriveSmart.move_velocity(-(drivetrainRightSideSpeed * 2));  // Adjust scaling as needed
-        RightDriveSmart.move_velocity((drivetrainLeftSideSpeed * 2));
+        RightDriveSmart.move_velocity((drivetrainLeftSideSpeed * 1.7));
 
         // Control Clamp and Flag using buttons
         if (Controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
