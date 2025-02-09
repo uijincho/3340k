@@ -133,32 +133,45 @@ void TurnDegrees(pros::IMU& inertial, Direction dir, int degrees) {
 }
 
 void autonomous() {
-    HighStakes.move_relative(-740, 50);
-    Inertial.reset();
-    pros::delay(2000);
+    // HighStakes.move_relative(-740, 50);
+    // pros::delay(20);
+    // // Inertial.reset();
+    // // pros::delay(2000);
 
-    //Rotate 10~15 degrees
-    TurnDegrees(Inertial, Direction::clockwise, 30);
-    /*
-    //Go forward to stake
-    LeftDriveSmart.move_velocity(-200);
-    RightDriveSmart.move_velocity(-200);
-    pros::delay(3000);
-    LeftDriveSmart.move_velocity(0);
-    RightDriveSmart.move_velocity(0);
+    // //Rotate 10~15 degrees
+    // //TurnDegrees(Inertial, Direction::clockwise, 30);
+    // LeftDriveSmart.move_velocity(40);
+    // RightDriveSmart.move_velocity(160);
+    // pros::delay(1500);
+    // ToggleClamp();
+    // LeftDriveSmart.move_velocity(0);
+    // RightDriveSmart.move_velocity(0);
+    // pros::delay(50);
+    // // TurnDegrees(Inertial, clockwise, 45);
+    // Intake.move_velocity(200);
+    // pros::delay(1500);
+    // Intake.move_velocity(0);
     //Clamp 
-    ToggleClamp();
+    // ToggleClamp();
     //Rotate 40~50 degrees counterclockwise
-    TurnDegrees(Inertial, Direction::counterclockwise, 40);
+    // TurnDegrees(Inertial, Direction::counterclockwise, 40);
     //Go backward to rings
     //Activate intake to get blue ring and score
     //Rotate 30 degrees clockwise
     //Go forward and stop at the ladder
+    LeftDriveSmart.move_velocity(-(40 * 2));  // Adjust scaling as needed
+    RightDriveSmart.move_velocity((40 * 2));
+    ToggleClamp();
+
+    
+
+    pros::delay(1000);
+
+    LeftDriveSmart.move_velocity(0);
+    RightDriveSmart.move_velocity(0);
 
     //ToggleFlag();
     //TurnDegrees(Inertial, Direction::clockwise, 30);
-}
-    */
 }
 
 /**
@@ -199,7 +212,7 @@ void opcontrol() {
 
         // Set motor velocities
         LeftDriveSmart.move_velocity(-(drivetrainRightSideSpeed * 2));  // Adjust scaling as needed
-        RightDriveSmart.move_velocity((drivetrainLeftSideSpeed * 1.7));
+        RightDriveSmart.move_velocity((drivetrainLeftSideSpeed * 2));
 
         // Control Clamp and Flag using buttons
         if (Controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
